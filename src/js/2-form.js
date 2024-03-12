@@ -1,36 +1,45 @@
 const formSet = document.querySelector('.feedback-form');
 const inputInfo = formSet.elements.email;
 const areaInfo = formSet.elements.message;
-let saveInfo = { email: '', message: '' };
 
-const parsedInfo = JSON.parse(localStorage.getItem('feedback-form-state'));
-
-if (parsedInfo !== null) {
-  areaInfo.value = parsedInfo.message;
-  inputInfo.value = parsedInfo.email;
-
-  saveInfo = parsedInfo;
-}
-
-formSet.addEventListener('input', event => {
-  const email = event.currentTarget.elements.email.value;
-  const message = event.currentTarget.elements.message.value;
-
-  saveInfo.email = email.trim();
-  saveInfo.message = message.trim();
-  localStorage.setItem('feedback-form-state', JSON.stringify(saveInfo));
-});
-
-formSet.addEventListener('submit', evt => {
-  evt.preventDefault();
-
-  if (email.length == 0 || message.length == 0) {
-    console.log(`please fill all field`);
-  } else {
-    console.log(saveInfo);
-    localStorage.removeItem('feedback-form-state');
-    formSet.reset();
-    saveInfo.email = '';
-    saveInfo.message = '';
+const loadFormState = () => {
+  const parsedInfo = JSON.parse(localStorage.getItem('feedback-form-state'));
+  if (parsedInfo !== null) {
+    areaInfo.value = parsedInfo.message;
+    inputInfo.value = parsedInfo.email;
+    return parsedInfo;
   }
-});
+  return { email: '', message: '' };
+};
+
+const saveFormState = () => {
+  const email = inputInfo.value.trim();
+  const message = areaInfo.value.trim();
+  const saveInfo = { email, message };
+  localStorage.setItem('feedback-form-state', JSON.stringify(saveInfo));
+  return saveInfo;
+};
+
+const clearFormState = () => {
+  localStorage.removeItem('feedback-form-state');
+  formSet.reset();
+};
+
+const handleSubmit = evt => {
+  evt.preventDefault();
+  const emailValue = inputInfo.value.trim();
+  const messageValue = areaInfo.value.trim();
+  if (emailValue.length === 0 || messageValue.length === 0) {
+    console.log(`Please fill in all fields.`);
+  } else {
+    const saveInfo = saveFormState();
+    console.log(saveInfo);
+    clearFormState();
+  }
+};
+
+formSet.addEventListener('input', saveFormState);
+formSet.addEventListener('submit', handleSubmit);
+
+// Load form state when the page loads
+const initialFormState = loadFormState();

@@ -93,9 +93,9 @@ galleryItems.forEach(item => {
 });
 
 
-const lightbox = new SimpleLightbox('.gallery-link', {
+const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
-  captionsDelay: 250,
+  captionDelay: 250,
 });
 
 
